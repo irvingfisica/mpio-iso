@@ -20,7 +20,7 @@ where T: GeoNum
     x >= xmin && x <= xmax && y >= ymin && y <= ymax
 }
 
-pub fn cves_inter(isoge: &GeoElemento<f64,Record>, subsge: &Vec<GeoElemento<f64,Record>>) -> Vec<String> 
+pub fn cves_inter(isoge: &GeoElemento<f64,Record>, subsge: &Vec<GeoElemento<f64,Record>>,cvestr: &str) -> Vec<String> 
 {
     
     let isoc = &isoge.geometria;
@@ -30,7 +30,7 @@ pub fn cves_inter(isoge: &GeoElemento<f64,Record>, subsge: &Vec<GeoElemento<f64,
             .filter(|mza| peek_inside(bbox, mza))
             .filter(|mnza| isoc.intersects(&mnza.geometria))
             .map(|mnz| {
-                match mnz.datos.get("CVEGEO") {
+                match mnz.datos.get(cvestr) {
                     Some(fcve) => match fcve {
                         FieldValue::Character(ocve) => match ocve {
                             Some(cve) => Some(cve.to_string()),
