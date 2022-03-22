@@ -1,85 +1,51 @@
-use mpio_iso::lectura;
-use mpio_iso::process;
-use shapefile::dbase::{FieldValue};
-use std::time::Instant;
-use std::collections::HashMap;
+
+use mpio_iso::isocron;
+
+use std::collections::BTreeMap;
 use std::fs;
 use fs::File;
 use std::io::Write;
-
-use lectura::read_shape;
-use process::cves_inter;
+use isocron::Isocrona;
 
 fn main() {
 
-    let ruta_out = "./datos_procesados/d_300.json";
+    let path_den = "./datos_procesados/d_1500.json";
+    let path_cen = "./datos_procesados/iso1500_censo.json";
 
-    let rootfold = "./datos/denue/";
+    let ruta_out = "./datos_procesados/f_1500.json";
 
-    let start = Instant::now();
+    let file_den = File::open(path_den).unwrap();
+    let file_cen = File::open(path_cen).unwrap();
 
-    let mut denues = Vec::new();
+    let isocden: BTreeMap<String,Vec<String>> = serde_json::from_reader(file_den)
+            .expect("Error al leer el archivo de unidades económicas");
+    let isoccen: BTreeMap<String,BTreeMap<String,f64>> = serde_json::from_reader(file_cen)
+            .expect("Error al leer el archivo de datos censales");
 
-    let paths = fs::read_dir(rootfold).unwrap()
-        .filter(|ele| match ele {
-            Ok(path) => match path.file_name().into_string() {
-                Ok(nombre) => nombre.contains(".shp"),
-                _ =>  false
-            },
-            _ => false
-        });
-    for path in paths {
-        let mut den_temp = match path {
-            Ok(file) => {
-                match file.path().to_str() {
-                    Some(cad) => match read_shape(cad) {
-                        Ok(datos) => datos,
-                        _ => continue
-                    },
-                    _ => continue
-                }
+    let mut iscoronas = BTreeMap::new();
+
+    for (key,values) in isocden.iter() {
+        let mut isoc = Isocrona::new(key);
+
+        for unidad in values.iter() {
+            let actividad = unidad[5..11].to_string();
+            *isoc.economico.entry(actividad).or_insert(0) += 1;
+        };
+
+        iscoronas.insert(key.to_string(),isoc);
+    };
+
+    for (key, values) in isoccen.iter() {
+        match iscoronas.get_mut(key) {
+            Some(isoc) => {
+                isoc.demografico = values.clone();
             },
             _ => continue
-        };
-        denues.append(&mut den_temp);
-    }
-    
-    let isocronas = read_shape("./datos/isocronas_sucmpls_09032022.shp").unwrap();
-
-    let mut mapa: HashMap<String,Vec<String>> = HashMap::new();
-
-    println!("Datos cargados! {} unidades",denues.len());
-    let duration = start.elapsed();
-    println!("Tiempo empleado para cargar datos: {:?}", duration);
-
-    let start = Instant::now();
-
-    for isoc in isocronas.iter()
-    .filter(|iso|{
-        match iso.datos.get("range") {
-            Some(FieldValue::Numeric(num)) => match num {
-                Some(inum) => *inum == 300.0,
-                _ => false
-            }
-            _ => false
         }
-    })
-    {
-        let cve = match isoc.datos.get("cveiso") {
-            Some(FieldValue::Character(Some(cvei))) => Some(cvei.as_str()),
-            _ => None
-        };
-        let intersects = cves_inter(isoc,&denues,"clee");
-        println!("cve: {:?}, intersecciones: {}",cve,intersects.len());
-
-        mapa.insert(cve.unwrap().to_string(),intersects);
-    }
-
-    let duration = start.elapsed();
-    println!("Tiempo empleado para calcular intersecciones: {:?}", duration);
+    };
 
     let mut salida = File::create(ruta_out).unwrap();
-    let j = serde_json::to_string_pretty(&mapa).unwrap();
+    let j = serde_json::to_string_pretty(&iscoronas).unwrap();
     write!(salida, "{}", j).unwrap();
     
 }
