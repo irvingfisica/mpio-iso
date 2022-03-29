@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize,Serialize};
 // use std::error::Error;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Isocrona {
     pub id: String,
     pub economico: BTreeMap<String,u32>,
