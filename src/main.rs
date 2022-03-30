@@ -1,13 +1,12 @@
 
 use mpio_iso::isocron;
 use mpls::{datos::Sucursal};
-use serde::{Deserialize,Serialize};
 
 use std::collections::BTreeMap;
 use std::fs;
 use fs::File;
 use std::io::Write;
-use isocron::Isocrona;
+use isocron::{Isocrona,Contexto};
 
 fn main() {
 
@@ -61,9 +60,5 @@ fn main() {
     
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Contexto {
-    sucursal: Sucursal,
-    isocronas: BTreeMap<String, Isocrona>
-}
+
 

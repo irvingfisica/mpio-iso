@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 use serde::{Deserialize,Serialize};
+use mpls::datos::Sucursal;
 // use std::error::Error;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -17,4 +18,10 @@ impl Isocrona {
             demografico: BTreeMap::new(),
         }
     }
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Contexto {
+    pub sucursal: Sucursal,
+    pub isocronas: BTreeMap<String, Isocrona>
 }
