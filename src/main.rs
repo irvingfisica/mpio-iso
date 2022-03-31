@@ -1,6 +1,6 @@
 
 use mpio_iso::isocron;
-use mpls::{datos::Sucursal};
+use mpls::{datos::SucursalIn};
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -19,7 +19,7 @@ fn main() {
     let file_suc = File::open(path_sucs).unwrap();
     let file_ali = File::open(path_alie).unwrap();
 
-    let sucursales: BTreeMap<String,Sucursal> = serde_json::from_reader(file_suc)
+    let sucursales: BTreeMap<String,SucursalIn> = serde_json::from_reader(file_suc)
             .expect("Error al leer el archivo de sucursales");
 
     let aliens: BTreeMap<String,Alien> = serde_json::from_reader(file_ali)

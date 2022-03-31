@@ -394,6 +394,7 @@ dependencies = [
 name = "mpio-iso"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "geo",
  "geo-types",
  "geojson",

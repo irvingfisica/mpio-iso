@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use serde::{Deserialize,Serialize};
-use mpls::datos::Sucursal;
+use mpls::datos::SucursalIn;
 // use std::error::Error;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -30,6 +30,6 @@ pub struct Alien {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Contexto {
-    pub sucursal: Sucursal,
+    pub sucursal: SucursalIn,
     pub isocronas: BTreeMap<String, Isocrona>,
 }
