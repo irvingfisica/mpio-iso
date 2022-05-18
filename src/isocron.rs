@@ -7,7 +7,7 @@ use mpls::datos::SucursalIn;
 pub struct Isocrona {
     pub id: String,
     pub economico: BTreeMap<String,u32>,
-    pub demografico: BTreeMap<String,f64>,
+    pub demografico: BTreeMap<String,Option<f64>>,
     pub mpls_cercanos: Option<i32>,
 }
 

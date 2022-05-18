@@ -9,10 +9,10 @@ use isocron::Isocrona;
 
 fn main() {
 
-    let path_den = "./datos_procesados/d_1800.json";
-    let path_cen = "./datos_procesados/iso1800_censo.json";
+    let path_den = "./datos_procesados/d_g500.json";
+    let path_cen = "./datos_procesados/grid500x500_censo.json";
 
-    let ruta_out = "./datos_procesados/f_1800.json";
+    let ruta_out = "./datos_procesados/f_g500.json";
 
     let file_den = File::open(path_den).unwrap();
     let file_cen = File::open(path_cen).unwrap();
